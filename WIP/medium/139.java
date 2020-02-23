@@ -1,31 +1,37 @@
 class Solution {
   public boolean wordBreak(String s, List<String> wordDict) {
-      if(wordDict.size() == 0) return false;
+      boolean found = false;
       int index = 0;
-      while(index<s.length()) {
-          for(int i=0; i<wordDict.size(); i++) {
-              int dictSize = wordDict.get(i).length();
-              // String wordCheck = wordDict.get(i);
-              if(s.length() < dictSize) {
-                  return false;
-              }
-              else {
-                  String substring = s.substring(0, dictSize);   
-                  if (wordBreakHelper(substring, wordDict)) {
-                      s = s.substring(dictSize, s.length());
+      String original = s;
+      while(s.length() > 0) {
+          if(index >= wordDict.size()) return false;
+          for(int i=index; i<wordDict.size(); i++) {
+              if(containsWord(s, wordDict.get(i))) {
+                  s = s.substring(wordDict.get(i).length(), s.length());
+                  found = true;
                   if(s.length() == 0) return true;
-                  }
+                  break;
+              }
+              if(i == wordDict.size()-1 && s.length() > 0) {
+                  found = false;
               }
           }
-          index++;
+          if(!found && index < wordDict.size()) {
+              index++;
+              s = original;
+          }
       }
       return false;
   }
-  public boolean wordBreakHelper(String word, List<String> wordDict) {
-      for(int i=0; i<wordDict.size(); i++) {
-          int dictSize = wordDict.get(i).length();
-          String wordCheck = wordDict.get(i);
-          if(word.equals(wordCheck)) return true;
+      
+  public boolean containsWord(String wholeString, String dictWord) {
+      int wordLength = dictWord.length();
+      if(wholeString.length() < dictWord.length()) {
+          return false;
+      }
+      else {
+          String checkWord = wholeString.substring(0, dictWord.length());
+          if(checkWord.equals(dictWord)) return true;
       }
       return false;
   }
