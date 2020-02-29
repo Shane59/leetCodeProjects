@@ -5,7 +5,7 @@ class Solution {
       String original = s;
       while(s.length() > 0) {
           if(index >= wordDict.size()) return false;
-          for(int i=index; i<wordDict.size(); i++) {
+          for(int i=index, j=0; i<wordDict.size(); i++, j++) {
               if(containsWord(s, wordDict.get(i))) {
                   s = s.substring(wordDict.get(i).length(), s.length());
                   found = true;
