@@ -3,62 +3,73 @@
  * public class ListNode {
  *     int val;
  *     ListNode next;
- *     ListNode(int x) { val = x; }
+ *     ListNode() {}
+ *     ListNode(int val) { this.val = val; }
+ *     ListNode(int val, ListNode next) { this.val = val; this.next = next; }
  * }
  */
 class Solution {
-  public ListNode addTwoNumbers(ListNode l1, ListNode l2) {
-      Queue<Integer> list1 = generateQueue(l1);
-      Queue<Integer> list2 = generateQueue(l2);
-      return sumLists(list1, list2);
-  }
-  public Queue<Integer> generateQueue(ListNode arr) {
-      Queue<Integer> temp = new LinkedList<>();
-      while(arr != null) {
-          temp.add(arr.val);
-          arr = arr.next;
-      }
-      return temp;
-  }
-  public ListNode sumLists(Queue<Integer> list1, Queue<Integer> list2) {
-      int add = 0;
-      int prevAdditional = 0;
-      int currentAdditional = 0;
-      if(list1.size() > list2.size()) {
-          while(list1.size() != list2.size()) list2.add(0);
-      }
-      if(list1.size() < list2.size()) {
-          while(list1.size() != list2.size()) list1.add(0);
-      }
-      List<Integer> tempStore = new ArrayList<>();
-      while(!list1.isEmpty() && !list2.isEmpty()) {
-          int num = list1.poll();
-          int num2 = list2.poll();
-          int sum = num + num2 + prevAdditional;
-          prevAdditional = 0;
-          if(sum >= 10) {
-              add = sum % 10;
-              currentAdditional = sum / 10;
-          }
-          else {
-              add = sum;
-          }
-          tempStore.add(add);
-          prevAdditional = currentAdditional;
-          currentAdditional = 0;
-      }
-      if (prevAdditional != 0) {
-          tempStore.add(prevAdditional);
-      }
-      ListNode ans = new ListNode(tempStore.get(0));
-      ListNode current = ans;
-      int index = 1;
-      System.out.println(tempStore);
-      while(index < tempStore.size()) {
-          ListNode el = new ListNode(tempStore.get(index++));
-          current.next = el;
-          current = current.next;
-      }
-      return ans;
-  }
+    public ListNode addTwoNumbers(ListNode l1, ListNode l2) {
+        int maxSize = Math.max(countSize(l1), countSize(l2));
+        
+        int[] l1List = nodeToList(l1, maxSize);
+        int[] l2List = nodeToList(l2, maxSize);
+        
+        int sumFirst = l1List[0] + l2List[0];
+        int extra = 0;
+        if (sumFirst / 10 > 0) {
+            extra = sumFirst / 10;
+            sumFirst = sumFirst % 10;
+        }
+        
+        ListNode ans = new ListNode(sumFirst);
+        ListNode ansTemp = ans;
+        
+        
+        for (int i = 1; i < l1List.length; i++) {
+            int sum = l1List[i] + l2List[i] + extra;
+            
+            if (sum / 10 > 0) {
+                extra = sum / 10;
+                sum = sum % 10;
+            } else {
+                extra = 0;
+            }
+            ListNode temp = new ListNode(sum);
+            ansTemp.next = temp;
+            ansTemp = ansTemp.next;
+        }
+        if (extra > 0) {
+            ansTemp.next = new ListNode(extra);
+        }
+        
+        return ans;
+    }
+    
+    private static int[] nodeToList(ListNode l, int size) {
+        int[] ans = new int[size];
+        ListNode curr = l;
+        int j = 0;
+        
+        for (int i = 0; i < size; i++) {
+            if (curr != null) {
+                ans[i] = curr.val;
+                curr = curr.next;
+            } else {
+                ans[i] = 0;
+            }
+        }
+        return ans;
+    }
+    
+    private static int countSize(ListNode l) {
+        int size = 0;
+        ListNode curr = l;
+        
+        while (curr != null) {
+            size++;
+            curr = curr.next;
+        }
+        return size;
+    }
 }
